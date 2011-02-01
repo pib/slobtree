@@ -8,3 +8,6 @@ class Index(object):
         self.f.write('\n')
         self.f.write(json.dumps({"data": [[key, val]]}, separators=(',', ':')))
         self.f.flush()
+
+    def search(self, key):
+        pass
