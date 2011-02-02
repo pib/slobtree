@@ -44,4 +44,8 @@ def when_i_search_for_key(self, key):
 
 @step(u"Then I should get '(.*)'")
 def then_i_should_get(self, expected_value):
-    assert world.result == expected_value, 'Expected %s' % expected_value
+    assert world.result == expected_value, 'Got %s' % world.result
+
+@step(u"Then I should get None")
+def then_i_should_get(self):
+    assert world.result == None, 'Got %s' % world.result

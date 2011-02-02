@@ -7,3 +7,9 @@ Feature: Search for data in an index
     Given I have an Index with data '\n{"data":[["foo","bar"]]}'
     When I search for key 'foo'
     Then I should get 'bar'
+
+  Scenario: Search for an nonexistant key in a single-item index
+    Given I have an Index with data '\n{"data":[["foo","bar"]]}'
+    When I search for key 'blar'
+    Then I should get None
+
