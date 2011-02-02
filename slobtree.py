@@ -26,10 +26,33 @@ class Index(object):
         if last_nl > -1:
             self.root = json.loads(content[last_nl:])
 
-    def insert(self, key, val):
+    def _write_node(self, node):
         self.f.write('\n')
-        self.f.write(json.dumps({"data": {key: val}}, separators=(',', ':')))
+        position = self.f.tell()
+        self.f.write(json.dumps(node, separators=(',', ':')))
         self.f.flush()
+        return position
+
+    def _find_node(self, _key):
+        return self.root
+
+    def _insert_node_data(self, node, key, val):
+        data = node['data']
+        for i in range(0, len(data)):
+            if key < data[i][0]:
+                data.insert(i, [key, val])
+                return
+        data.append([key, val])
+
+    def insert(self, key, val):
+        node = self._find_node(key) or {"data": []}
+        self._insert_node_data(node, key, val)
+        self._write_node(node)
+        self.root = node
 
     def search(self, key):
-        return self.root.get('data', {}).get(key)
+        data = self.root.get('data', [])
+        for k, val in data:
+            if key == k:
+                return val
+        return None
