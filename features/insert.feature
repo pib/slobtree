@@ -6,4 +6,4 @@ Feature: Insert data into an index
   Scenario: First insert
     Given I have a new Index
     When I insert key 'foo' with data 'bar'
-    Then the index file should contain '\n{"data":[["foo","bar"]]}'
+    Then the index file should contain '\n{"data":{"foo":"bar"}}'
