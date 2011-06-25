@@ -4,12 +4,20 @@ Feature: Search for data in an index
   I want to be able to search the index
 
   Scenario: Search for an existing key in a single-item index
-    Given I have an Index with data '\n{"data":[["foo","bar"]]}'
+    Given I have an Index with data:
+      """
+      "
+      "{"data":[["foo","bar"]]}
+      """
     When I search for key 'foo'
     Then I should get 'bar'
 
   Scenario: Search for an nonexistant key in a single-item index
-    Given I have an Index with data '\n{"data":[["foo","bar"]]}'
+    Given I have an Index with data:
+      """
+      "
+      "{"data":[["foo","bar"]]}
+      """
     When I search for key 'blar'
     Then I should get None
 

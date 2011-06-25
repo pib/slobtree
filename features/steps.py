@@ -2,50 +2,61 @@
 import os
 from slobtree import Index
 from lettuce import after, before, step, world
-
+from nose.tools import assert_equals
 
 @after.each_scenario
 @before.each_scenario
-def clean_up(scenario):
+def clean_up(_scenario):
     world.index = None
     try:
         os.unlink('test.slob')
-    except: pass
+    except OSError:
+        pass
 
 
-@step(u'Given I have a new Index')
-def given_i_have_a_new_index(step):
+@step(u'I have a new order (.*) Index')
+def given_i_have_a_new_index_with_a_branching_factor_of(_self, b):
+    world.index = Index('test.slob', branching_factor=int(b))
+
+
+@step(u'I have a new Index')
+def given_i_have_a_new_index(_self):
     world.index = Index('test.slob')
 
 
-@step(u"When I insert key '(.*)' with data '(.*)'")
-def when_i_insert_key_with_data(step, key, val):
+@step(u"I insert key '(.*)' with data '(.*)'")
+def when_i_insert_key_with_data(_self, key, val):
     world.index.insert(key, val)
 
 
-@step(u"Then the index file should contain '(.*)'")
-def then_the_index_file_should_contain(step, expected_contents):
-    expected_contents = expected_contents.replace('\\n', '\n')
+@step(u"I insert the following key/value pairs:")
+def when_i_insert_the_following_key_value_pairs(self):
+    for pair in self.hashes:
+        world.index.insert(pair['key'], pair['value'])
+
+
+@step(u"the index file should contain:")
+def the_index_file_should_contain(self):
     real_contents = open('test.slob').read()
-    assert real_contents == expected_contents, 'Got """%s"""' % real_contents
+    assert_equals(real_contents, self.multiline)
 
 
-@step(u"Given I have an Index with data '(.*)'")
-def given_i_have_an_index_with_data(self, data):
-    data = data.replace('\\n', '\n')
-    open('test.slob', 'w').write(data)
+@step(u"I have an Index with data:")
+def i_have_an_index_with_data(self):
+    open('test.slob', 'w').write(self.multiline)
     world.index = Index('test.slob')
 
 
-@step(u"When I search for key '(.*)'")
-def when_i_search_for_key(self, key):
+@step(u"I search for key '(.*)'")
+def i_search_for_key(_self, key):
     world.result = world.index.search(key)
 
 
-@step(u"Then I should get '(.*)'")
-def then_i_should_get(self, expected_value):
-    assert world.result == expected_value, 'Got %s' % world.result
+@step(u"I should get '(.*)'")
+def i_should_get(_self, expected_value):
+    assert_equals(world.result, expected_value)
 
-@step(u"Then I should get None")
-def then_i_should_get(self):
-    assert world.result == None, 'Got %s' % world.result
+
+@step(u"I should get None")
+def i_should_get_none(_self):
+    assert_equals(world.result, None)

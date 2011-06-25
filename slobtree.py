@@ -4,7 +4,8 @@ import json
 
 
 class Index(object):
-    def __init__(self, filename):
+    def __init__(self, filename, branching_factor=1024):
+        self.branching_factor = branching_factor
         self.f = open(filename, 'ab+')
         self.root = None
         self._read_root()
