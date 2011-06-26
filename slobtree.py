@@ -45,7 +45,10 @@ class Index(object):
         return False
 
     def _find_node(self, find_key):
+        if not self.root:
+            return None
         node = self.root
+        path = [self.root]
         while self._is_key_node(node):
             last = None
             for key, offset in node['keys']:
@@ -53,8 +56,9 @@ class Index(object):
                 if key >= find_key:
                     break
             node = self._read_node(last)
+            path.append(node)
 
-        return node
+        return path
 
     def _insert_node_data(self, node, key, val):
         data = node['data']
@@ -65,14 +69,17 @@ class Index(object):
         data.append([key, val])
 
     def insert(self, key, val):
-        node = self._find_node(key) or {"data": []}
+        node_path = self._find_node(key) or [self.root, {"data": []}]
+        node = node_path[-1]
         self._insert_node_data(node, key, val)
+        if len(node['data']) > self.branching_factor:
+            self._split_node(node)
         self._write_node(node)
         self.root = node
 
     def search(self, key):
-        node = self._find_node(key) or {"data": []}
-        data = node.get('data', [])
+        node_path = self._find_node(key) or [self.root, {"data": []}]
+        data = node_path[-1].get('data', [])
         for k, val in data:
             if key == k:
                 return val
