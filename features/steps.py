@@ -44,6 +44,7 @@ def the_index_file_should_contain(self):
 @step(u"I have an Index with data:")
 def i_have_an_index_with_data(self):
     open('test.slob', 'w').write(self.multiline)
+    print 'muliline:\n"""%s"""' % self.multiline
     world.index = Index('test.slob')
 
 

@@ -2,7 +2,6 @@ import errno
 import os
 import json
 
-
 class Index(object):
     def __init__(self, filename, branching_factor=1024):
         self.branching_factor = branching_factor
@@ -47,17 +46,13 @@ class Index(object):
 
     def _find_node(self, find_key):
         node = self.root
-        print "_find_node starting at node: %s" % node
         while self._is_key_node(node):
-            print "node: %s" % node
             last = None
             for key, offset in node['keys']:
-                print "kv: %s, %s" % (key, offset)
-                if key > find_key:
-                    node = self._read_node(last)
-                    break
                 last = offset
-            return None
+                if key >= find_key:
+                    break
+            node = self._read_node(last)
 
         return node
 

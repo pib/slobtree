@@ -27,7 +27,7 @@ Feature: Search for data in an index
       "
       "{"data":[["foo","bar"]]}
       "{"data":[["bar","baz"]]}
-      "{"keys":[["bar",27], ["foo",1]]}
+      "{"keys":[["bar",26],["foo",1]]}
       """
     Whe I search for key 'foo'
     Then I should get 'bar'
@@ -38,7 +38,7 @@ Feature: Search for data in an index
       "
       "{"data":[["foo","bar"]]}
       "{"data":[["bar","baz"]]}
-      "{"keys":[["bar",27], ["foo",1]]}
+      "{"keys":[["bar",26],["foo",1]]}
       """
     When I search for key 'blar'
     Then I should get None
