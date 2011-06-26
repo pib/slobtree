@@ -26,11 +26,12 @@ class Index(object):
         if last_nl > -1:
             self.root = json.loads(content[last_nl:])
 
-    def _write_node(self, node):
+    def _write_node(self, node_path):
+        # TODO: write out all nodes in path to this node
         self.f.seek(0, os.SEEK_END)
         self.f.write('\n')
         position = self.f.tell()
-        self.f.write(json.dumps(node, separators=(',', ':')))
+        self.f.write(json.dumps(node_path[-1], separators=(',', ':')))
         self.f.flush()
         return position
 
@@ -68,14 +69,20 @@ class Index(object):
                 return
         data.append([key, val])
 
+    def split_node(node_path):
+        # See http://en.wikipedia.org/wiki/Btree
+        # Should split write out nodes on its way up?
+        # Or can it just generate a path and then pass the list of nodes to _write_node
+        # also, perhaps rename _write_node to _write_nodes
+
     def insert(self, key, val):
         node_path = self._find_node(key) or [self.root, {"data": []}]
         node = node_path[-1]
         self._insert_node_data(node, key, val)
         if len(node['data']) > self.branching_factor:
-            self._split_node(node)
-        self._write_node(node)
-        self.root = node
+            self._split_node(node_path)
+        self._write_node(node_path)
+        self.root = node_path[0]
 
     def search(self, key):
         node_path = self._find_node(key) or [self.root, {"data": []}]
